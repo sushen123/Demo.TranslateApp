@@ -1,0 +1,65 @@
+{
+    "id": "4d75ed99-76b4-4d3c-93f7-43ed323dd179",
+    "version": "0.0.1",
+    "requiredApiVersion": "^1.44.0",
+    "iconFile": "icon.png",
+    "author": {
+        "name": "sushen",
+        "homepage": "https://github.com/sushen123",
+        "support": "https://github.com/sushen123"
+    },
+    "name": "Translate",
+    "nameSlug": "translate",
+    "classFile": "TranslateApp.ts",
+    "description": "App that will help to translate voice message",
+    "implements": [
+        "IPostMessageSent"
+    ],
+    "permissions": [
+        {
+            "name": "slashcommand"
+        },
+        {
+            "name": "user.read"
+        },
+        {
+            "name": "user.write"
+        },
+        {
+            "name": "room.read"
+        },
+        {
+            "name": "room.write"
+        },
+        {
+            "name": "message.read"
+        },
+        {
+            "name": "message.write"
+        },
+        {
+            "name": "api"
+        },
+        {
+            "name": "networking"
+        },
+        {
+            "name": "threads.read"
+        },
+        {
+            "name": "upload.read"
+        },
+        {
+            "name": "oauth-app.read"
+        },
+        {
+            "name": "oauth-app.write"
+        },
+        {
+            "name": "ui.registerButtons"
+        },
+        {
+            "name": "ui.interact"
+        }
+    ]
+}
