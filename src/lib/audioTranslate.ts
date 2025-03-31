@@ -1,7 +1,7 @@
 import { IRead, IHttp, ILogger } from "@rocket.chat/apps-engine/definition/accessors";
 import { IMessage, IMessageAttachment } from "@rocket.chat/apps-engine/definition/messages";
 import { Settings } from "../config/settings";
-import { format } from "path";
+
 
 export async function translateAudio (
     http: IHttp,
@@ -40,10 +40,11 @@ export async function translateAudio (
         let text: string = ""
         while (transcriptStatus !== "completed") {
             if (transcriptStatus === "error") {
-                throw new Error("Transcription error: " + transcresponse.data.error);
+                throw Error("Transcription error: " + transcresponse.data.error);
             }
             console.log("Transcription status:", transcriptStatus);
-            await sleep(3000); // Wait for 5 seconds before polling again
+            //we can use webhook instead of polling continously
+            await sleep(2000); // Wait for 3 seconds before polling again
             const statusResponse = await http.get(`https://api.assemblyai.com/v2/transcript/${transcriptId}`, {
                 headers: { Authorization: speechToTextApiKey }
             });
@@ -78,7 +79,7 @@ export async function getBuffer(
     const audio = await read.getUploadReader().getBufferById(message.file?._id!);
     return audio
     } catch (error) {
-        throw new error;
+        throw error;
     }
 }
 

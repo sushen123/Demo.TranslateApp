@@ -9,6 +9,7 @@ export enum Settings {
 	API_KEY = 'api_key_speech_to_text',
     API_KEY_TRANSLATION = "api_key_translation",
     API_ENDPOINT = 'api_endpoint',
+    REAL_TIME_TRANSLATION = 'realtime-translation'
 }
 
 export const settings: ISetting[] = [
@@ -55,6 +56,17 @@ export const settings: ISetting[] = [
 		public: false,
         packageValue: '',
 	},
+    {
+		id: Settings.REAL_TIME_TRANSLATION,
+		type: SettingType.BOOLEAN,
+        i18nLabel: 'Real Time Translation',
+        i18nDescription: "Translate voice message automatically",
+		i18nPlaceholder: '',
+		required: true,
+		public: false,
+        packageValue: '',
+	},
+
 
 ];
 

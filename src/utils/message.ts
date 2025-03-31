@@ -13,3 +13,12 @@ export async function notifyMessage(room: IRoom, read: IRead, sender: IUser, mes
     }
     return notifier.notifyUser(sender, messageBuilder.getMessage());
     }
+
+export async function notifyRoom(room: IRoom, response: string, modify: IModify ): Promise<void> {
+        const notifier = modify.getNotifier();
+        const messageBuilder = notifier.getMessageBuilder();
+        messageBuilder.setRoom(room)
+        messageBuilder.setText(response);
+
+        return notifier.notifyRoom(room, messageBuilder.getMessage());
+        }

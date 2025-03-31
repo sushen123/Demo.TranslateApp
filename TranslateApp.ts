@@ -10,11 +10,11 @@ import {
 } from '@rocket.chat/apps-engine/definition/accessors';
 import { App } from '@rocket.chat/apps-engine/definition/App';
 import { IAppInfo } from '@rocket.chat/apps-engine/definition/metadata';
-import { settings } from './src/config/settings';
+import { Settings, settings } from './src/config/settings';
 import { TranslateCommand } from './src/command/TranslateCommand';
 import { UIActionButtonContext } from '@rocket.chat/apps-engine/definition/ui';
 import { IUIKitResponse, UIKitActionButtonInteractionContext } from '@rocket.chat/apps-engine/definition/uikit';
-import { notifyMessage } from './src/utils/message';
+import { notifyMessage, notifyRoom } from './src/utils/message';
 import { translateAudio} from './src/lib/audioTranslate';
 import { IMessage, IMessageAttachment, IPostMessageSent } from '@rocket.chat/apps-engine/definition/messages';
 import { IUser } from '@rocket.chat/apps-engine/definition/users';
@@ -58,25 +58,32 @@ export class TranslationApp extends App implements IPostMessageSent  {
         _persistence: IPersistence,
         modify: IModify,
     ): Promise<IUIKitResponse> {
-        const {
-            buttonContext,
-            actionId,
-            triggerId,
-            user,
-            room,
-            message,
-        } = context.getInteractionData();
 
-        this.getLogger().debug("message", message)
+        try {
+            const {
+                buttonContext,
+                actionId,
+                triggerId,
+                user,
+                room,
+                message,
+            } = context.getInteractionData();
 
-        const languages = user.settings?.preferences?.language || "en"
+            this.getLogger().debug("message", message)
 
-        if (actionId === 'my-action-id') {
-            //@ts-ignore
-            const response = await translateAudio(http, message, read, this.getLogger(), languages);
-                    await notifyMessage(room, read, user, response);
+            const languages = user.settings?.preferences?.language || "en"
+
+            if (actionId === 'my-action-id' && message) {
+                const response = await translateAudio(http, message, read, this.getLogger(), languages);
+                const translateMessage = await response
+                if(translateMessage) {
+                    await notifyMessage(room, read, user, translateMessage);
+                }
+            }
+            return context.getInteractionResponder().successResponse();
+        } catch (error) {
+            return context.getInteractionResponder().errorResponse();
         }
-        return context.getInteractionResponder().successResponse();
 }
 
 public async executePostMessageSent(
@@ -93,21 +100,26 @@ public async executePostMessageSent(
     const user = await read.getUserReader().getById(message.sender.id || "");
     const language = user?.settings?.preferences?.language || 'en'
     const response = await translateAudio(http, message, read, this.getLogger(), language);
-    modify.getNotifier().notifyRoom(message.room, response);
+    this.getLogger().debug(response, "response")
+    await notifyRoom(message.room, response, modify)
 
     } catch (error) {
         this.getLogger().debug(error)
     }
 }
 
-public async checkPostMessageSent(message: IMessage): Promise<boolean> {
+public async checkPostMessageSent(message: IMessage, read: IRead): Promise<boolean> {
+    const realTimeTranslation =  await read.getEnvironmentReader().getSettings().getValueById(Settings.REAL_TIME_TRANSLATION);
+
+    if(!realTimeTranslation) {
+        return false
+    }
     return message.attachments?.some(this.isAudioAttachment) ?? false;
 }
 
 public isAudioAttachment(attachment: IMessageAttachment): boolean {
         return attachment.audioUrl != undefined
     }
-
 }
 
 
