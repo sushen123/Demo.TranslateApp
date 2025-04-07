@@ -1,3 +1,13 @@
+Demo RocketChat App for AI Translation and transcription for voice messages 
+<h2>Features 🚀</h2>
+<li>
+  <li>Translate Voice Messages of room/channel/dm</li> 
+  <li>Action button to translate voice messages</li> 
+  <li>Support Assembly for transcription and gemini for translation</li>
+  <li>Translate last voice message of thread</li>
+  <li>Translate voice messages with <code>/translate</code></li>
+  <li>Auto translate voice message</li> 
+</ul>
 
 <h2 >How to set up 💻</h2>
 
